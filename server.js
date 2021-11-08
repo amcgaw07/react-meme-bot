@@ -1,7 +1,4 @@
-//handle invalid user input
-//handle reply threads
-let thesaurus = require("thesaurus");
-
+const thesaurus = require("thesaurus");
 const Twit = require("twit"),
   fs = require("fs"),
   path = require("path"),
@@ -9,19 +6,17 @@ const Twit = require("twit"),
 
 const T = new Twit(config);
 
-// console.log(thesaurus.find(""));
-
 //standard emotion types which correspond to the image libraries
-const emotionTypes = ["angry", "sad", "confused", "afraid", "happy", "funny"];
+const stdEmotions = ["angry", "sad", "confused", "afraid", "happy", "funny"];
 
 //compare requested emotion against synonyms of the standard emotions to see if there is a match, if not return x
 function isValidEmotion(emotion) {
   if (emotion.length === 1) return "x"; //invalid input, return instruction string
-  for (const validEmotion of emotionTypes) {
+  for (const validEmotion of stdEmotions) {
     const validEmotionSyn = thesaurus.find(validEmotion);
     if (validEmotionSyn.indexOf(emotion) > -1) return validEmotion;
   }
-  return "x";
+  return "x"; //bot will return instructions on x command
 }
 
 //setup stream to wait for user mentions
@@ -54,7 +49,7 @@ const tweetRandomImage = (replyFrom, id, emotion) => {
     T.post(
       "statuses/update",
       {
-        status: `${replyFrom} usable emotions are ${emotionTypes.join(
+        status: `${replyFrom} usable emotions are ${stdEmotions.join(
           ", "
         )} and their synonyms`,
         in_reply_to_status_id: id,
